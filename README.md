@@ -1,5 +1,5 @@
 
-#Pasos Iniciales
+# Pasos Iniciales
 
 - git add [nombre-del-archivo]
 - git commit -m "mensaje"
