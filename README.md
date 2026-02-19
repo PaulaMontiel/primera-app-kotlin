@@ -1,2 +1,6 @@
-# primera-app-kotlin
-Primera Aplicacion con kotlin
+
+#Instrucciones 
+
+- git add [nombre-del-archivo]
+- git commit -m "mensaje"
+- git push [-u] origin main | git push 
