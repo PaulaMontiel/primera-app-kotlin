@@ -88,6 +88,18 @@ fun MainMenu(modifier: Modifier = Modifier) {
                 val intent = Intent(context, TodoAppActivity::class.java)
                 context.startActivity(intent)
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botón Trivia
+            MenuButton(
+                text = "Trivia",
+                imageRes = R.drawable.trivia
+
+            ) {
+                val intent = Intent(context, TriviaAppActivity::class.java)
+                context.startActivity(intent)
+            }
         }
     }
 }
