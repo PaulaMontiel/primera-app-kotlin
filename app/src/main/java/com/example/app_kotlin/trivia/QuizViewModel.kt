@@ -33,28 +33,40 @@ class QuizViewModel : ViewModel() {
     }
 
     fun onConfirmAnswer() {
-        // Obtener el estado actual
+
         val current = _uiState.value
 
-        // Validaciones
         val selected = current.selectedIndex ?: return
+        val question = current.currentQuestion ?: return
 
-        val currentQuestion = current.currentQuestion ?: return
+        val isCorrect = selected == question.correctIndex
 
-        // Validar si "selected" es la correcta (seleccionada)
-        val isCorrect = selected == currentQuestion.correctIndex
-
-        // Calcular el nuevo score (Puntaje)
         val newScore = if (isCorrect) current.score + 100 else current.score
+        val feedback = if (isCorrect) "✅ Correcto" else "❌ Incorrecto"
 
-        // Validar si se acabaron las preguntas
-        val currentIndexQuestion = current.currentIndex + 1
-        val finished = currentIndexQuestion >= current.questions.size
+        // SISTEMA DE VIDAS
+        val newLives = if (isCorrect) current.lives else current.lives - 1
 
-        // Actualizar el _uiState
+        // Sin vidas → finalizar automáticamente
+        if (newLives <= 0) {
+            _uiState.value = current.copy(
+                score = newScore,
+                feedback = feedback,
+                lives = 0,
+                isFinished = true
+            )
+            return
+        }
+
+        //  Avanzar o finalizar si es última
+        val nextIndex = current.currentIndex + 1
+        val finished = nextIndex >= current.questions.size
+
         _uiState.value = current.copy(
             score = newScore,
-            currentIndex = currentIndexQuestion,
+            feedback = feedback,
+            lives = newLives,
+            currentIndex = nextIndex,
             selectedIndex = null,
             isFinished = finished
         )
@@ -86,6 +98,75 @@ class QuizViewModel : ViewModel() {
                 title = "La instrucción que permite restaurar estado tras recreación de Activity es",
                 options = listOf("intentData", "savedInstanceState", "activityState", "bundleConfig"),
                 correctIndex = 1
+            ),
+
+            // NUEVAS PREGUNTAS
+
+            Question(
+                id = 5,
+                title = "¿Que componente administra datos relacionados a la UI respetando el ciclo de vida?",
+                options = listOf("Activity", "Fragment", "ViewModel", "Service"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 6,
+                title = "¿Que corrutina se usa para tareas en el hilo principal?",
+                options = listOf("Dispatchers.IO", "Dispatchers.Default", "Dispatchers.Main", "Dispatchers.Global"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 7,
+                title = "¿Que funcion se usa para iniciar una corrutina en Compose?",
+                options = listOf("launchEffect", "rememberCoroutine", "LaunchedEffect", "startCoroutine"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 8,
+                title = "¿Que componente permite navegación entre pantallas en Compose?",
+                options = listOf("NavHost", "NavigatorLayout", "RouteManager", "ScreenHost"),
+                correctIndex = 0
+            ),
+            Question(
+                id = 9,
+                title = "¿Que layout permite superponer elementos en Compose?",
+                options = listOf("Column", "Row", "Box", "StackLayout"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 10,
+                title = "¿Que función convierte un Flow en estado observable en Compose?",
+                options = listOf("collect()", "observe()", "collectAsState()", "asLiveData()"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 11,
+                title = "¿Que componente tradicional se reemplaza por LazyColumn en Compose?",
+                options = listOf("ScrollView", "ListView", "RecyclerView", "GridView"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 12,
+                title = "¿Que palabra clave permite manejar valores nulos en Kotlin?",
+                options = listOf("nullable", "nullsafe", "?", "!!"),
+                correctIndex = 2
+            ),
+            Question(
+                id = 13,
+                title = "¿Que operador se usa para acceso seguro a propiedades nulas?",
+                options = listOf(".", "?.", "!!", "::"),
+                correctIndex = 1
+            ),
+            Question(
+                id = 14,
+                title = "¿Que componente se usa para ejecutar tareas en segundo plano de forma programada?",
+                options = listOf("WorkerManager", "WorkManager", "JobService", "TaskRunner"),
+                correctIndex = 1
+            ),
+            Question(
+                id = 15,
+                title = "¿Que arquitectura recomienda Google para apps Android modernas?",
+                options = listOf("MVC", "MVP", "MVVM", "CleanOnly"),
+                correctIndex = 2
             )
         )
     }

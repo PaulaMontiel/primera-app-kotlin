@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.app_kotlin.ui.theme.AppkotlinTheme
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,12 +46,19 @@ fun MainMenu(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) {
 
-        // Imagen de fondo de la pantalla
+        // Imagen de fondo
         Image(
             painter = painterResource(R.drawable.pastel),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
+        )
+
+        // 🔥 Overlay oscuro para legibilidad
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f))
         )
 
         Column(
@@ -63,42 +72,34 @@ fun MainMenu(modifier: Modifier = Modifier) {
             Text(
                 text = "Mis Mini Proyectos",
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = Color.White
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Botón Counter App
             MenuButton(
                 text = "Counter App",
                 imageRes = R.drawable.glitter
             ) {
-                val intent = Intent(context, CounterAppActivity::class.java)
-                context.startActivity(intent)
+                context.startActivity(Intent(context, CounterAppActivity::class.java))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón Todo App
             MenuButton(
                 text = "Todo App",
                 imageRes = R.drawable.sparkle
-
             ) {
-                val intent = Intent(context, TodoAppActivity::class.java)
-                context.startActivity(intent)
+                context.startActivity(Intent(context, TodoAppActivity::class.java))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón Trivia
             MenuButton(
                 text = "Trivia",
                 imageRes = R.drawable.trivia
-
             ) {
-                val intent = Intent(context, TriviaAppActivity::class.java)
-                context.startActivity(intent)
+                context.startActivity(Intent(context, TriviaAppActivity::class.java))
             }
         }
     }

@@ -60,7 +60,7 @@ class TriviaAppActivity : ComponentActivity() {
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = Color(0xFF1E88E5)
+                                containerColor = Color(0xFFF06292)
                             )
                         )
                     },
@@ -98,7 +98,6 @@ fun QuestionScreen(
     onConfirm: () -> Unit,
 ) {
 
-    // Tomare la pregunta actual desde el estado (derivado)
     val q = state.currentQuestion ?: return
 
     Column(
@@ -107,50 +106,69 @@ fun QuestionScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Pregunta 1 de N
+
+        //  VIDAS
+        Text("Vidas: ❤️ ${state.lives}")
+
+        // Pregunta actual
         Text(
             text = "Pregunta ${state.currentIndex + 1} de ${state.questions.size}",
             style = MaterialTheme.typography.titleMedium
         )
+
         Text(
             text = q.title,
             style = MaterialTheme.typography.headlineSmall
         )
 
-        q.options.forEachIndexed{ index, option ->
+        q.options.forEachIndexed { index, option ->
             val isSelected = state.selectedIndex == index
 
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onSelectedOption(index) } ,
+                    .clickable { onSelectedOption(index) },
                 elevation = CardDefaults.elevatedCardElevation(
                     defaultElevation = if (isSelected) 14.dp else 1.dp
                 )
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
                         selected = isSelected,
                         onClick = { onSelectedOption(index) }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = option,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    Text(option)
                 }
             }
         }
 
+        // BOTÓN CONFIRMAR
         Button(
             onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state.selectedIndex != null // deshabilitado si no hay selección
         ) {
-            Text("Confirmar")
+            Text(
+                if (state.isLastQuestion)
+                    "Ver resultados"
+                else
+                    "Confirmar"
+            )
         }
 
+        // FEEDBACK INMEDIATO
+        state.feedback?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
+        // PORCENTAJE DE AVANCE
+        Text(
+            text = "Porcentaje avance: ${state.progressPercent}%"
+        )
     }
 }
 
