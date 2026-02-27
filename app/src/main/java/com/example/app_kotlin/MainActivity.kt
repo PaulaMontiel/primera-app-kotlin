@@ -58,7 +58,6 @@ fun MainMenu(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.4f))
         )
 
         Column(
