@@ -5,16 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -37,21 +28,15 @@ class TriviaAppActivity : ComponentActivity() {
         setContent {
             AppkotlinTheme {
 
-                val viewModel : QuizViewModel = viewModel()
-
+                val viewModel: QuizViewModel = viewModel()
                 val state = viewModel.uiState.collectAsStateWithLifecycle().value
 
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = {
-                                Text(
-                                    "Trivia App",
-                                    color = Color.White
-                                )
-                            },
+                            title = { Text("Trivia App", color = Color.White) },
                             navigationIcon = {
-                                IconButton( onClick = { finish() }) {
+                                IconButton(onClick = { finish() }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                                         contentDescription = "Volver",
@@ -65,19 +50,25 @@ class TriviaAppActivity : ComponentActivity() {
                         )
                     },
                 ) { innerPadding ->
+
                     Box(
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize()
                     ) {
-                        if(state.isFinished) {
-                            // Vista FinishedScreen
+
+                        if (state.isFinished) {
+
+                            //  PANTALLA FINAL
                             FinishedScreen(
                                 score = state.score,
-                                total = state.questions.size * 100
+                                total = state.questions.size * 100,
+                                onRetry = viewModel::resetQuiz
                             )
+
                         } else {
-                            // Vista/Pantalla QuestionScreen
+
+                            //  PANTALLA DE PREGUNTAS
                             QuestionScreen(
                                 state = state,
                                 onSelectedOption = viewModel::onSelectedOption,
@@ -93,7 +84,7 @@ class TriviaAppActivity : ComponentActivity() {
 
 @Composable
 fun QuestionScreen(
-    state : QuizUiState,
+    state: QuizUiState,
     onSelectedOption: (Int) -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -110,18 +101,21 @@ fun QuestionScreen(
         //  VIDAS
         Text("Vidas: ❤️ ${state.lives}")
 
-        // Pregunta actual
+        // Progreso de preguntas
         Text(
             text = "Pregunta ${state.currentIndex + 1} de ${state.questions.size}",
             style = MaterialTheme.typography.titleMedium
         )
 
+        // Pregunta
         Text(
             text = q.title,
             style = MaterialTheme.typography.headlineSmall
         )
 
+        // Opciones
         q.options.forEachIndexed { index, option ->
+
             val isSelected = state.selectedIndex == index
 
             ElevatedCard(
@@ -129,25 +123,30 @@ fun QuestionScreen(
                     .fillMaxWidth()
                     .clickable { onSelectedOption(index) },
                 elevation = CardDefaults.elevatedCardElevation(
-                    defaultElevation = if (isSelected) 14.dp else 1.dp
+                    defaultElevation = if (isSelected) 12.dp else 1.dp
                 )
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(8.dp)
+                ) {
                     RadioButton(
                         selected = isSelected,
                         onClick = { onSelectedOption(index) }
                     )
+
                     Spacer(modifier = Modifier.width(8.dp))
+
                     Text(option)
                 }
             }
         }
 
-        // BOTÓN CONFIRMAR
+        // BOTÓN CONFIRMAR / VER RESULTADOS
         Button(
             onClick = onConfirm,
             modifier = Modifier.fillMaxWidth(),
-            enabled = state.selectedIndex != null // deshabilitado si no hay selección
+            enabled = state.selectedIndex != null
         ) {
             Text(
                 if (state.isLastQuestion)
@@ -175,7 +174,8 @@ fun QuestionScreen(
 @Composable
 fun FinishedScreen(
     score: Int,
-    total: Int
+    total: Int,
+    onRetry: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -184,6 +184,7 @@ fun FinishedScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "¡Quiz finalizado!",
             style = MaterialTheme.typography.headlineMedium
@@ -198,7 +199,7 @@ fun FinishedScreen(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        Button(onClick = {} ) {
+        Button(onClick = onRetry) {
             Text("Reintentar Quiz")
         }
     }
